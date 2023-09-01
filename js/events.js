@@ -1,9 +1,6 @@
 import { uploadImage, getLowResolutionImage } from './API/api.js'
 
-
-
-// El resto del código permanece igual
-
+let viewer = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     showImage();
@@ -61,6 +58,7 @@ const tileSourceFromData = function (data, filesUrl) {
     return dzi;
 };
 
+
 const showImage = function () {
     // Obtener la URL del archivo .dzi y de los tiles desde el servidor FastAPI
     axios.get('http://127.0.0.1:8000/api/get_dzi_info').then(response => {
@@ -72,15 +70,22 @@ const showImage = function () {
             const dziData = response.data;
             const tileSource = tileSourceFromData(dziData, tilesBaseUrl);
 
-            const viewer = OpenSeadragon({
+            // Destruye el visor actual si ya existe
+            if (viewer) {
+                viewer.destroy();
+                viewer = null;
+            }
+
+            // Crea un nuevo visor
+            viewer = OpenSeadragon({
                 id: 'openseadragon1',
                 prefixUrl: '//openseadragon.github.io/openseadragon/images/',
                 tileSources: tileSource
             });
         }).catch(error => {
-            // console.error('Error al cargar el .dzi:', error);
+            console.error('Error al cargar el .dzi:', error);
         });
     }).catch(error => {
-        // console.error('Error al obtener información del DZI:', error);
+        console.error('Error al obtener información del DZI:', error);
     });
 }
