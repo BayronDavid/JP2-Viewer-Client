@@ -10,6 +10,9 @@
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <link rel="stylesheet" href="./CSS/main.css">
     <title>JP2 viewer</title>
 </head>
 
@@ -18,14 +21,17 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-3 bg-light p-3 border">
-                <div class="d-flex flex-column align-items-center">
+                <div class="d-flex flex-column align-items-center gap-2">
                     <p>Menú</p>
-                    <form id="upload-form">
-                        <div class="mb-3">
+                    <form id="upload-form" class="d-flex flex-column align-items-center">
+                        <div class="mb-3 ">
                             <input type="file" id="file-input" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Subir</button>
+                        <button type="submit" class="btn btn-primary w-50">Subir</button>
                     </form>
+
+                    <div id="logs">
+                    </div>
                 </div>
             </div>
 

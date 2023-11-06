@@ -60,15 +60,18 @@ const tileSourceFromData = function (data, filesUrl) {
 
 
 const showImage = function () {
+    logMessage('Solicitando información DZI...');
     // Obtener la URL del archivo .dzi y de los tiles desde el servidor FastAPI
     axios.get('http://127.0.0.1:8000/api/get_dzi_info').then(response => {
         const dziUrl = response.data.filename;
         const tilesBaseUrl = dziUrl.replace('.dzi', '_files/');
 
+
         // Hacer una petición para obtener el XML .dzi
         axios.get(dziUrl).then(response => {
             const dziData = response.data;
             const tileSource = tileSourceFromData(dziData, tilesBaseUrl);
+
 
             // Destruye el visor actual si ya existe
             if (viewer) {
@@ -80,12 +83,43 @@ const showImage = function () {
             viewer = OpenSeadragon({
                 id: 'openseadragon1',
                 prefixUrl: '//openseadragon.github.io/openseadragon/images/',
-                tileSources: tileSource
+                tileSources: tileSource,
+                zoomInButton: "zoom-in",
+                zoomOutButton: "zoom-out",
+                homeButton: "home",
+                fullPageButton: "full-page",
+                nextButton: "next",
+                previousButton: "previous",
+                // showNavigator: true,
+                // navigatorPosition: "ABSOLUTE",
+                // navigatorTop: "40px",
+                // navigatorLeft: "4px",
+                // navigatorHeight: "120px",
+                // navigatorWidth: "145px",
+                
+            });
+
+            viewer.addHandler('tile-loaded', function (event) {
+                logMessage(` ${event.tile.url}`);
             });
         }).catch(error => {
             console.error('Error al cargar el .dzi:', error);
+            logMessage(`Error al cargar el .dzi: ${error}`);
         });
     }).catch(error => {
         console.error('Error al obtener información del DZI:', error);
+        logMessage(`Error al obtener información del DZI: ${error}`);
     });
+}
+
+function logMessage(message) {
+    const logDiv = document.getElementById('logs');
+    const timestamp = new Date().toLocaleString();  // Formato de fecha más legible
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="log-timestamp">${timestamp}</span> - ${message}`;
+    logDiv.appendChild(entry);
+
+    // Auto-scroll al último mensaje
+    logDiv.scrollTop = logDiv.scrollHeight;
 }

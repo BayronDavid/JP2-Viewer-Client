@@ -1,42 +1,20 @@
-body,
-html {
-    height: 100vh;
-    /* Cambiando a vh para asegurar que cubra toda la ventana del navegador */
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-.sidebar {
-    height: 100vh;
-    /* Cambiando a vh para asegurar que cubra toda la ventana del navegador */
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #333;
-    padding-top: 20px;
-    color: #fff;
+#logs {
+    font-family: monospace, sans-serif;
+    max-height: 400px;
     overflow-y: auto;
-    /* Añadiendo scroll solo en caso de que el contenido se desborde */
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #ffffff;
+    font-size: 0.6em;
+    width: 80%;
 }
 
-.content {
-    height: 100vh;
-    /* Cambiando a vh para asegurar que cubra toda la ventana del navegador */
-    margin-left: 250px;
-    /* El mismo ancho que la barra lateral */
-    background-color: #f0f0f0;
+.log-entry {
+    padding: 5px;
+    border-bottom: 1px dotted #aaa;
 }
 
-.image-container {
-    height: 100%;
-    width: 100%;
-}
-
-.image {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    /* Ajustar la imagen para que llene el contenedor sin distorsionarla */
+.log-timestamp {
+    color: #666;
+    font-size: 0.5em;
 }
