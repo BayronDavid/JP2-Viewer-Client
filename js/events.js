@@ -12,25 +12,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     uploadForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
+    event.preventDefault();
+    loadingModal.show();
 
-        // Muestra el modal de carga
-        loadingModal.show();
+    const fileInput = document.getElementById('file-input');
+    const file = fileInput.files[0];
+    const formatSelect = document.getElementById('format-select');
+    const format = formatSelect.value; // Captura el formato seleccionado
 
-        const fileInput = document.getElementById('file-input');
-        const file = fileInput.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('format', format); // Incluye el formato en la solicitud
 
-        if (file) {
-            try {
-                const response = await uploadImage(file);
-            } catch (error) {
-                console.log("Ocurrió un error durante la carga", error);
-            } finally {
-                loadingModal.hide();
-                showImage();
-            }
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/upload/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            // Manejar respuesta...
+        } catch (error) {
+            console.log("Ocurrió un error durante la carga", error);
+        } finally {
+            loadingModal.hide();
+            showImage();
         }
-    });
+    }
+});
+
 });
 
 
