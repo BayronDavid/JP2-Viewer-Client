@@ -1,5 +1,3 @@
-import { uploadImage, getLowResolutionImage } from './API/api.js'
-
 let viewer = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -42,7 +40,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 });
-
 
 const tileSourceFromData = function (data, filesUrl) {
     const parser = new DOMParser();
@@ -132,4 +129,5 @@ function logMessage(message) {
 
     // Auto-scroll al último mensaje
     logDiv.scrollTop = logDiv.scrollHeight;
+    logDiv.scrollLeft = logDiv.scrollWidth - logDiv.clientWidth;
 }
