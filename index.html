@@ -11,6 +11,13 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+    <!-- // #region OpenSeaDragon annotorious -->
+    <!-- CSS stylesheet -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@recogito/annotorious-openseadragon@2.7.14/dist/annotorious.min.css"
+    />
+    <!-- // #endregion -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -36,9 +43,9 @@
             <!-- Aquí se añadirán las imágenes -->
           </div>
           <!-- // #endregion  -->
-          <hr>
+          <hr />
           <div
-          id="form-logs"
+            id="form-logs"
             class="d-flex flex-column align-items-center gap-2 overflow-auto"
           >
             <!-- // #region Subir imagenes -->
@@ -103,7 +110,7 @@
 
         <!-- Main Content -->
         <div class="col-9">
-          <div id="openseadragon1" style="width: 100%; height: 100vh"></div>
+          <div id="openseadragon1" style="width: 80%; height: 80vh"></div>
         </div>
       </div>
     </div>
@@ -124,12 +131,17 @@
     </div>
 
     <!-- CDN para OpenSeadragon -->
+    <!-- // #region Open Sea dragon -->
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"
       integrity="sha512-VKBuvrXdP1AXvfs+m4l3ZNZSI4PFJF0K0hGJJZ4RiNRkvFMO4IwFRHkoTc7xsdZhMgkLn+Ioq4elndAZicBcRQ=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-openseadragon@2.7.14/dist/openseadragon-annotorious.min.js"></script>
+    <!-- // #endregion -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
