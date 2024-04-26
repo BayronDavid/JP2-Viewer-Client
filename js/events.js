@@ -107,7 +107,7 @@ const showImage = function () {
             });
 
             viewer.addHandler('tile-loaded', function (event) {
-                logMessage(` ${event.tile.url}`);
+                logMessage(` ${event.tile.getUrl()}`);
             });
         }).catch(error => {
             console.error('Error al cargar el .dzi:', error);
