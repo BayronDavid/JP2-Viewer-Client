@@ -30,8 +30,17 @@ document.addEventListener("DOMContentLoaded", async () => {
           <button class="btn btn-danger btn-sm delete-button" data-image-id="${image.id}"><i class="fa-solid fa-trash"></i></button>
         `;
 
+        listItem.querySelector("img").crossOrigin = "Anonymous";
+
         // Agregar evento de clic para cargar la imagen en el visor
         listItem.querySelector("img").addEventListener("click", () => {
+          // Eliminar la clase 'selected' de todas las imágenes
+          const allImages = document.querySelectorAll(".img-thumbnail");
+          allImages.forEach((img) => img.classList.remove("selected"));
+
+          // Agregar la clase 'selected' a la imagen clicada
+          listItem.querySelector("img").classList.add("selected");
+
           showImage(image.id);
         });
 
@@ -41,6 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           .addEventListener("click", async (event) => {
             const imageId = event.target.getAttribute("data-image-id");
             await deleteImage(imageId);
+
             // Recargar la lista de imágenes después de eliminar
             loadImages();
           });
@@ -51,6 +61,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       loadingModal.hide();
       // Mostrar la primera imagen en el visor por defecto
       if (images.length > 0) {
+        // Obtener el primer elemento de la lista
+        const firstImageListItem = imageList.querySelector(".image-container");
+
+        // Agregar la clase 'selected' a la imagen
+        firstImageListItem.querySelector("img").classList.add("selected");
+
+        // Mostrar la primera imagen en el visor
         showImage(images[0].id);
       }
     } catch (error) {
@@ -68,14 +85,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       const tilesBaseUrl = `http://127.0.0.1:8000/dzi/${imageId}_files/`;
       const tileSource = tileSourceFromData(dziData, tilesBaseUrl);
 
+      tileSource.crossOriginPolicy = "Anonymous";
+
       if (viewer) {
         viewer.destroy();
       }
 
       viewer = OpenSeadragon({
         id: "openseadragon1",
-        prefixUrl: "//openseadragon.github.io/openseadragon/images/",
+        // prefixUrl: "//openseadragon.github.io/openseadragon/images/",
+        prefixUrl:
+          "https://cdn.jsdelivr.net/gh/Benomrans/openseadragon-icons@main/images/",
+
         tileSources: tileSource,
+        filters: true,
       });
 
       const anno = OpenSeadragon.Annotorious(viewer);
@@ -130,7 +153,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       });
 
-
       viewer.addHandler("tile-loaded", function (event) {
         logMessage(`Tile cargado: ${event.tile.getUrl()}`);
       });
@@ -140,8 +162,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-
-  
   const deleteImage = async (imageId) => {
     try {
       const response = await axios.delete(
@@ -233,4 +253,57 @@ function logMessage(message) {
   // Auto-scroll al último mensaje
   logDiv.scrollTop = logDiv.scrollHeight;
   logDiv.scrollLeft = logDiv.scrollWidth - logDiv.clientWidth;
+}
+
+function applyCustomFilter() {
+  const convolutionMatrix = document.getElementById('convolutionMatrix').value;
+  if (convolutionMatrix.trim() === '') {
+    alert('Por favor, ingrese una matriz de convolución.');
+    return;
+  }
+
+  const matrix = convolutionMatrix.split(',').map(parseFloat);
+  if (matrix.length !== 9 || matrix.some(isNaN)) {
+    alert('La matriz de convolución ingresada no es válida. Por favor, ingrese una matriz de 3x3.');
+    return;
+  }
+
+  viewer.setFilterOptions({
+    filters: {
+      processors: OpenSeadragon.Filters.CONVOLUTION(matrix)
+    }
+  });
+}
+
+function applyPresetFilter(filterType) {
+  let matrix;
+  switch (filterType) {
+    case "sharpen":
+      matrix = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+      break;
+    case "blur":
+      matrix = [1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9];
+      break;
+    case "edgeDetection":
+      matrix = [-1, -1, -1, -1, 8, -1, -1, -1, -1];
+      break;
+    case "emboss":
+      matrix = [-2, -1, 0, -1, 1, 1, 0, 1, 2];
+      break;
+    default:
+      return;
+  }
+
+  viewer.setFilterOptions({
+    filters: {
+      processors: OpenSeadragon.Filters.CONVOLUTION(matrix),
+    },
+  });
+}
+function invert() {
+  viewer.setFilterOptions({
+    filters: {
+      processors: OpenSeadragon.Filters.INVERT(),
+    },
+  });
 }
