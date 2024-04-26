@@ -21,3 +21,41 @@
     color: #666;
     font-size: 0.5em;
 }
+
+/* List images */
+#imageList{
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    padding: 5px;
+
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.image-container {
+    max-width: 200px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.image-container:hover{
+    background: #9bccfd6c;
+}
+
+.delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+/* ............ */
+#form-logs{
+    max-height: 40vh;
+}

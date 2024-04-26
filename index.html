@@ -13,7 +13,10 @@
 
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
 
     <link rel="stylesheet" href="./CSS/main.css" />
@@ -28,13 +31,17 @@
           class="col-3 bg-light p-3 border"
           style="max-height: 100vh; overflow-y: auto"
         >
+          <!-- // #region Lista de imagenes -->
+          <div id="imageList" class="list-group border mb-2">
+            <!-- Aquí se añadirán las imágenes -->
+          </div>
+          <!-- // #endregion  -->
+          <hr>
           <div
+          id="form-logs"
             class="d-flex flex-column align-items-center gap-2 overflow-auto"
           >
-
-          <div id="image-list" class="list-group">
-            <!-- Las imágenes se cargarán aquí -->
-          </div>
+            <!-- // #region Subir imagenes -->
             <form
               id="upload-form"
               class="d-flex flex-column align-items-center"
@@ -59,7 +66,8 @@
               </div>
               <button type="submit" class="btn btn-primary w-50">Subir</button>
             </form>
-            <!-- Acordeon -->
+            <!-- // #endregion  -->
+            <!-- // #region Losgs -->
             <div
               class="accordion accordion-flush w-100"
               id="accordionFlushExample"
@@ -89,6 +97,7 @@
                 </div>
               </div>
             </div>
+            <!-- // #endregion -->
           </div>
         </div>
 

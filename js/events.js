@@ -13,48 +13,53 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
 
   // Función para cargar la lista de imágeness
-  const loadImages = async () => {
-    try {
-      const response = await axios.get("http://127.0.0.1:8000/api/list_images");
-      const images = response.data;
-      imageList.innerHTML='';
+   const loadImages = async () => {
+     try {
+       const response = await axios.get(
+         "http://127.0.0.1:8000/api/list_images"
+       );
+       const images = response.data;
+       const imageList = document.getElementById("imageList");
+       imageList.innerHTML = "";
 
-      // Mostrar cada imagen en la lista con un botón de eliminar
-      images.forEach((image) => {
-        const listItem = document.createElement("div");
-        listItem.className = "list-group-item";
-        listItem.innerHTML = `
-                    <img src="http://127.0.0.1:8000/dzi/${image.id}.dzi" alt="${image.filename}" class="img-thumbnail" style="cursor: pointer;">
-                    <button class="btn btn-danger btn-sm float-end" data-image-id="${image.id}">Eliminar</button>
-                `;
-        imageList.appendChild(listItem);
+       images.forEach((image) => {
+         const listItem = document.createElement("div");
+         listItem.className = "image-container list-group-item";
 
-        // Agregar evento de clic para cargar la imagen en el visor
-        listItem.querySelector("img").addEventListener("click", () => {
-          showImage(image.id);
-        });
+         // Contenido del contenedor de la imagen
+         listItem.innerHTML = `
+          <img src="${image.thumbnail_url}" alt="${image.filename}" class="img-thumbnail">
+          <div class="image-details">${image.filename}</div>
+          <button class="btn btn-danger btn-sm delete-button" data-image-id="${image.id}"><i class="fa-solid fa-trash"></i></button>
+        `;
 
-        // Agregar evento de clic para eliminar la imagen
-        listItem
-          .querySelector("button")
-          .addEventListener("click", async (event) => {
-            const imageId = event.target.getAttribute("data-image-id");
-            await deleteImage(imageId);
-            // Recargar la lista de imágenes después de eliminar
-            imageList.innerHTML = "";
-            loadImages();
-          });
-      });
+         // Agregar evento de clic para cargar la imagen en el visor
+         listItem.querySelector("img").addEventListener("click", () => {
+           showImage(image.id);
+         });
 
-      loadingModal.hide();
-      // Mostrar la primera imagen en el visor por defecto
-      if (images.length > 0) {
-        showImage(images[0].id);
-      }
-    } catch (error) {
-      console.error("Error al cargar la lista de imágenes:", error);
-    }
-  };
+         // Agregar evento de clic para eliminar la imagen
+         listItem
+           .querySelector(".delete-button")
+           .addEventListener("click", async (event) => {
+             const imageId = event.target.getAttribute("data-image-id");
+             await deleteImage(imageId);
+             // Recargar la lista de imágenes después de eliminar
+             loadImages();
+           });
+
+         imageList.appendChild(listItem);
+       });
+
+       loadingModal.hide();
+       // Mostrar la primera imagen en el visor por defecto
+       if (images.length > 0) {
+         showImage(images[0].id);
+       }
+     } catch (error) {
+       console.error("Error al cargar la lista de imágenes:", error);
+     }
+   };
 
   // Función para cargar una imagen en el visor
   const showImage = async (imageId) => {
@@ -101,7 +106,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       const response = await axios.delete(
         `http://127.0.0.1:8000/api/delete_image/${imageId}`
       );
-      console.log(response.data.message);
+      console.log(
+        response.data.message,
+        `http://127.0.0.1:8000/api/delete_image/${imageId}`
+      );
     } catch (error) {
       console.error(`Error al eliminar la imagen ${imageId}:`, error);
     }
@@ -172,50 +180,6 @@ const tileSourceFromData = function (data, filesUrl) {
 
   return dzi;
 };
-
-// const showImage = function () {
-//     logMessage('Solicitando información DZI...');
-//     // Obtener la URL del archivo .dzi y de los tiles desde el servidor FastAPI
-//     axios.get('http://127.0.0.1:8000/api/get_dzi_info').then(response => {
-//         const dziUrl = response.data.filename;
-//         const tilesBaseUrl = dziUrl.replace('.dzi', '_files/');
-
-//         // Hacer una petición para obtener el XML .dzi
-//         axios.get(dziUrl).then(response => {
-//             const dziData = response.data;
-//             const tileSource = tileSourceFromData(dziData, tilesBaseUrl);
-
-//             // Destruye el visor actual si ya existe
-//             if (viewer) {
-//                 viewer.destroy();
-//                 viewer = null;
-//             }
-
-//             // Crea un nuevo visor
-//             viewer = OpenSeadragon({
-//                 id: 'openseadragon1',
-//                 prefixUrl: '//openseadragon.github.io/openseadragon/images/',
-//                 tileSources: tileSource,
-//                 zoomInButton: "zoom-in",
-//                 zoomOutButton: "zoom-out",
-//                 homeButton: "home",
-//                 fullPageButton: "full-page",
-//                 nextButton: "next",
-//                 previousButton: "previous",
-//             });
-
-//             viewer.addHandler('tile-loaded', function (event) {
-//                 logMessage(` ${event.tile.getUrl()}`);
-//             });
-//         }).catch(error => {
-//             console.error('Error al cargar el .dzi:', error);
-//             logMessage(`Error al cargar el .dzi: ${error}`);
-//         });
-//     }).catch(error => {
-//         console.error('Error al obtener información del DZI:', error);
-//         logMessage(`Error al obtener información del DZI: ${error}`);
-//     });
-// }
 
 function logMessage(message) {
   const logDiv = document.getElementById("logs");
