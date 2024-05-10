@@ -300,6 +300,7 @@ function applyPresetFilter(filterType) {
     },
   });
 }
+
 function invert() {
   viewer.setFilterOptions({
     filters: {
