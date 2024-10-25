@@ -1,53 +1,100 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Panorama 360° con Three.js</title>
-    <style>
-        body { margin: 0; }
-        canvas { width: 100%; height: 100% }
-    </style>
-</head>
-<body>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js"></script>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"
+      integrity="sha512-VKBuvrXdP1AXvfs+m4l3ZNZSI4PFJF0K0hGJJZ4RiNRkvFMO4IwFRHkoTc7xsdZhMgkLn+Ioq4elndAZicBcRQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <title>JP2 Viewer</title>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <div
+          class="col-3 bg-light p-3 border"
+          style="max-height: 100vh; overflow-y: auto"
+        >
+          <div class="list-group border mb-2" id="imageList"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-9">
+          <div id="openseadragon1" style="width: 100%; height: 100vh"></div>
+        </div>
+      </div>
+    </div>
+
     <script>
-        let scene, camera, renderer, sphere;
+      document.addEventListener("DOMContentLoaded", async () => {
+        const viewerElement = document.getElementById("openseadragon1");
 
-        function init() {
-            scene = new THREE.Scene();
-
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-            renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
-
-            const geometry = new THREE.SphereGeometry(500, 60, 40);
-            geometry.scale(-1, 1, 1); 
-            const texture = new THREE.TextureLoader().load('https://cdn.polyhaven.com/asset_img/primary/venice_sunset.png');
-            const material = new THREE.MeshBasicMaterial({map: texture});
-            sphere = new THREE.Mesh(geometry, material);
-            scene.add(sphere);
-
-            camera.position.set(0, 0, 0);
-
-            animate();
+        // Fetch image information from the server
+        async function getImageInfo() {
+          try {
+            const response = await axios.get("http://127.0.0.1:8000/image_info/");
+            return response.data;
+          } catch (error) {
+            console.error("Error fetching image info:", error);
+            return null;
+          }
         }
 
-        function animate() {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
+        // Initialize OpenSeadragon viewer with the tile source
+        async function initializeViewer() {
+          const imageInfo = await getImageInfo();
+
+          if (!imageInfo) {
+            console.error("Failed to initialize OpenSeadragon: no image info.");
+            return;
+          }
+
+          const { dimensions, num_resolutions, tile_size } = imageInfo;
+
+          // OpenSeadragon setup with the image info
+          const viewer = OpenSeadragon({
+            element: viewerElement,
+            prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
+            tileSources: {
+              width: dimensions.width,
+              height: dimensions.height,
+              tileWidth: tile_size.tile_width,  // Ajustar el tamaño del tile
+              tileHeight: tile_size.tile_height, // Ajustar el tamaño del tile
+              minLevel: 0,
+              maxLevel: num_resolutions - 1,
+              getTileUrl: function (level, x, y) {
+                const scale = Math.pow(2, num_resolutions - level - 1); // Ajustar escala para cada nivel
+                const tileWidth = tile_size.tile_width * scale;
+                const tileHeight = tile_size.tile_height * scale;
+                return `http://127.0.0.1:8000/tiles/?x=${x * tileWidth}&y=${y * tileHeight}&width=${tile_size.tile_width}&height=${tile_size.tile_height}&resolution=${level}`;
+              },
+            },
+            crossOriginPolicy: "Anonymous",
+          });
+
+          viewer.addHandler("tile-loaded", function (event) {
+            console.log(`Tile loaded: ${event.tile.getUrl()}`);
+          });
+
+          viewer.addHandler("tile-load-failed", function (event) {
+            console.error(`Failed to load tile: ${event.tile.getUrl()}`);
+          });
         }
 
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        window.addEventListener('resize', onWindowResize, false);
-
-        init();
+        // Initialize the OpenSeadragon viewer when the page loads
+        initializeViewer();
+      });
     </script>
-</body>
+  </body>
 </html>
